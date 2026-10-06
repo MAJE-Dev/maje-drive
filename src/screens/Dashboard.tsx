@@ -16,7 +16,7 @@ const TEAL = '#00CCCC';
 function StatusBar() {
   return (
     <div style={{ height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 22px', flexShrink: 0 }}>
-      <span style={{ fontFamily: "'JetBrains Mono'", fontSize: 13, fontWeight: 600, color: '#F2F3F7' }}>9:41</span>
+      <span style={{ fontFamily: "'JetBrains Mono Variable'", fontSize: 13, fontWeight: 600, color: '#F2F3F7' }}>9:41</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <svg width="16" height="12" viewBox="0 0 16 12" fill="#F2F3F7">
           <rect x="0" y="8" width="3" height="4" rx="1" />
@@ -113,11 +113,11 @@ function VehicleCard({ vehicle, maintenances, onNavigate }: {
           <span style={{
             background: 'rgba(13,15,19,0.7)',
             borderRadius: 6, padding: '3px 10px',
-            fontFamily: "'JetBrains Mono'", color: '#F2F3F7', fontSize: 11, fontWeight: 500,
+            fontFamily: "'JetBrains Mono Variable'", color: '#F2F3F7', fontSize: 11, fontWeight: 500,
           }}>
             {vehicle.plate}
           </span>
-          <span style={{ fontFamily: "'JetBrains Mono'", color: 'rgba(242,243,247,0.7)', fontSize: 12 }}>
+          <span style={{ fontFamily: "'JetBrains Mono Variable'", color: 'rgba(242,243,247,0.7)', fontSize: 12 }}>
             {fmtKm(vehicle.mileage)} km
           </span>
         </div>

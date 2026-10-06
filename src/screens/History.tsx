@@ -179,7 +179,7 @@ export default function History({ vehicles, selectedVehicleId, maintenances, onN
                       <div style={{ color: '#F2F3F7', fontSize: 14, fontWeight: 600, marginBottom: 3 }}>{m.name}</div>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                         <span style={{ color: '#4A5168', fontSize: 12 }}>{fmtDate(m.date)}</span>
-                        <span style={{ fontFamily: "'JetBrains Mono'", color: '#4A5168', fontSize: 11 }}>{fmtKm(m.mileage)} km</span>
+                        <span style={{ fontFamily: "'JetBrains Mono Variable'", color: '#4A5168', fontSize: 11 }}>{fmtKm(m.mileage)} km</span>
                       </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
@@ -196,12 +196,12 @@ export default function History({ vehicles, selectedVehicleId, maintenances, onN
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                         <div>
                           <div style={{ color: '#4A5168', fontSize: 10, letterSpacing: '0.06em', marginBottom: 3 }}>KM NA TROCA</div>
-                          <div style={{ fontFamily: "'JetBrains Mono'", color: '#8B929E', fontSize: 13 }}>{fmtKm(m.mileage)} km</div>
+                          <div style={{ fontFamily: "'JetBrains Mono Variable'", color: '#8B929E', fontSize: 13 }}>{fmtKm(m.mileage)} km</div>
                         </div>
                         {m.nextMileage && (
                           <div>
                             <div style={{ color: '#4A5168', fontSize: 10, letterSpacing: '0.06em', marginBottom: 3 }}>PRÓXIMA TROCA</div>
-                            <div style={{ fontFamily: "'JetBrains Mono'", color: '#8B929E', fontSize: 13 }}>{fmtKm(m.nextMileage)} km</div>
+                            <div style={{ fontFamily: "'JetBrains Mono Variable'", color: '#8B929E', fontSize: 13 }}>{fmtKm(m.nextMileage)} km</div>
                           </div>
                         )}
                       </div>

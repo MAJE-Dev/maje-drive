@@ -204,14 +204,14 @@ export default function AlertsScreen({ vehicles, alerts, onNavigate, onDismiss }
                     )}
                     {kmDiff !== null && (
                       <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '6px 10px' }}>
-                        <span style={{ fontFamily: "'JetBrains Mono'", color: '#8B929E', fontSize: 11 }}>
+                        <span style={{ fontFamily: "'JetBrains Mono Variable'", color: '#8B929E', fontSize: 11 }}>
                           {kmDiff < 0 ? `${fmtKm(Math.abs(kmDiff))} km vencido` : `${fmtKm(kmDiff)} km restantes`}
                         </span>
                       </div>
                     )}
                     {alert.dueMileage && (
                       <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '6px 10px' }}>
-                        <span style={{ fontFamily: "'JetBrains Mono'", color: '#4A5168', fontSize: 11 }}>Previsto: {fmtKm(alert.dueMileage)} km</span>
+                        <span style={{ fontFamily: "'JetBrains Mono Variable'", color: '#4A5168', fontSize: 11 }}>Previsto: {fmtKm(alert.dueMileage)} km</span>
                       </div>
                     )}
                   </div>

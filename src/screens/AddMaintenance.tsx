@@ -41,7 +41,7 @@ const inputStyle = (mono = false): React.CSSProperties => ({
   width: '100%', background: '#131619',
   border: '1px solid #222630', borderRadius: 12,
   padding: '13px 16px', color: '#F2F3F7', fontSize: 14,
-  fontFamily: mono ? "'JetBrains Mono'" : "'Inter'",
+  fontFamily: mono ? "'JetBrains Mono Variable'" : "'Inter Variable'",
 });
 
 export default function AddMaintenance({ vehicles, selectedVehicleId, onNavigate, onSave }: AddMaintenanceProps) {
@@ -177,7 +177,7 @@ export default function AddMaintenance({ vehicles, selectedVehicleId, onNavigate
               <input
                 type="number" value={mileage} onChange={e => setMileage(e.target.value)}
                 placeholder={selectedVehicle ? String(selectedVehicle.mileage) : '45230'}
-                style={{ width: '100%', background: '#131619', border: '1px solid #222630', borderRadius: 12, padding: '12px 42px 12px 14px', color: '#F2F3F7', fontSize: 13, fontFamily: "'JetBrains Mono'" }}
+                style={{ width: '100%', background: '#131619', border: '1px solid #222630', borderRadius: 12, padding: '12px 42px 12px 14px', color: '#F2F3F7', fontSize: 13, fontFamily: "'JetBrains Mono Variable'" }}
                 onFocus={focusTeal} onBlur={blurBorder}
               />
               <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#4A5168', fontSize: 11 }}>km</span>
@@ -192,7 +192,7 @@ export default function AddMaintenance({ vehicles, selectedVehicleId, onNavigate
             <input
               type="number" step="0.01" value={cost} onChange={e => setCost(e.target.value)}
               placeholder="180,00"
-              style={{ width: '100%', background: '#131619', border: '1px solid #222630', borderRadius: 12, padding: '13px 16px 13px 36px', color: '#F2F3F7', fontSize: 14, fontFamily: "'JetBrains Mono'" }}
+              style={{ width: '100%', background: '#131619', border: '1px solid #222630', borderRadius: 12, padding: '13px 16px 13px 36px', color: '#F2F3F7', fontSize: 14, fontFamily: "'JetBrains Mono Variable'" }}
               onFocus={focusTeal} onBlur={blurBorder}
             />
           </div>
@@ -222,7 +222,7 @@ export default function AddMaintenance({ vehicles, selectedVehicleId, onNavigate
               <div style={{ color: '#4A5168', fontSize: 10, letterSpacing: '0.06em', marginBottom: 6 }}>PRÓX. KM</div>
               <div style={{ position: 'relative' }}>
                 <input type="number" value={nextMileage} onChange={e => setNextMileage(e.target.value)} placeholder="48000"
-                  style={{ width: '100%', background: '#131619', border: '1px solid #222630', borderRadius: 10, padding: '10px 38px 10px 12px', color: '#F2F3F7', fontSize: 12, fontFamily: "'JetBrains Mono'" }}
+                  style={{ width: '100%', background: '#131619', border: '1px solid #222630', borderRadius: 10, padding: '10px 38px 10px 12px', color: '#F2F3F7', fontSize: 12, fontFamily: "'JetBrains Mono Variable'" }}
                   onFocus={focusTeal} onBlur={blurBorder}
                 />
                 <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#4A5168', fontSize: 10 }}>km</span>

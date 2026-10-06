@@ -147,7 +147,7 @@ export default function Garage({ vehicles, selectedVehicleId, onNavigate, onSele
                           </div>
                           <span style={{
                             background: 'rgba(13,15,19,0.7)', borderRadius: 6, padding: '3px 10px',
-                            fontFamily: "'JetBrains Mono'", color: '#F2F3F7', fontSize: 11,
+                            fontFamily: "'JetBrains Mono Variable'", color: '#F2F3F7', fontSize: 11,
                           }}>
                             {v.plate}
                           </span>
@@ -160,7 +160,7 @@ export default function Garage({ vehicles, selectedVehicleId, onNavigate, onSele
                     {/* Info row */}
                     <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                        <span style={{ fontFamily: "'JetBrains Mono'", color: '#8B929E', fontSize: 12, fontWeight: 500 }}>
+                        <span style={{ fontFamily: "'JetBrains Mono Variable'", color: '#8B929E', fontSize: 12, fontWeight: 500 }}>
                           {fmtKm(v.mileage)} km
                         </span>
                         <span style={{ color: '#2C3040' }}>·</span>

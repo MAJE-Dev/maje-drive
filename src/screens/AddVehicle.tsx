@@ -174,7 +174,7 @@ export default function AddVehicle({ onNavigate, onSave }: AddVehicleProps) {
               placeholder="12500"
               style={{
                 width: '100%', background: '#131619', border: '1px solid #222630', borderRadius: 12,
-                padding: '13px 52px 13px 16px', color: '#F2F3F7', fontSize: 14, fontFamily: "'JetBrains Mono'",
+                padding: '13px 52px 13px 16px', color: '#F2F3F7', fontSize: 14, fontFamily: "'JetBrains Mono Variable'",
               }}
               onFocus={e => (e.target.style.borderColor = TEAL)}
               onBlur={e => (e.target.style.borderColor = '#222630')}

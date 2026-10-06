@@ -24,49 +24,47 @@ A gestão do ciclo de vida automotivo exige monitoramento rigoroso de variáveis
 O **Maje Drive** centraliza a gestão automotiva com foco em telemetria por quilometragem e saúde mecânica preditiva. A plataforma emite alertas automatizados baseados no uso real do veículo (ex: "Troca de pastilhas de freio estimada para os próximos 1.500 km"), evitando surpresas e gerando relatórios de manutenção consolidados em PDF. Isso comprova o histórico de cuidados do automóvel, aumentando a segurança operacional e agregando valor comercial direto no momento da negociação.
 
 
-## 🛠️2. Estrutura Inicial do Projeto (React Native / Expo)
-> *Configuração do ambiente e arquitetura base do projeto em React Native com Expo.*
+## 🛠️2. Estrutura do Projeto (React + Vite + Capacitor)
+> *O Maje Drive é um app React (TypeScript + Tailwind CSS v4) empacotado como app Android nativo com o [Capacitor](https://capacitorjs.com).*
 
 ### 2.1 Organização de pastas
 ```text
 maje-drive/
-├── assets/             # Imagens, fontes e logos
 ├── src/
-│   ├── components/     # Componentes reutilizáveis (botões, cards, inputs)
-│   ├── screens/        # Telas principais do aplicativo (Dashboard, Abastecimento, etc.)
-│   ├── routes/         # Configuração de navegação (React Navigation)
-│   ├── services/       # Integrações e lógica de dados (API / AsyncStorage)
-│   └── styles/         # Paleta de cores global e estilos compartilhados
-├── App.js              # Ponto de entrada da aplicação
-├── app.json            # Configurações do Expo
-└── package.json        # Dependências do projeto
+│   ├── components/     # Componentes reutilizáveis (BottomNav)
+│   ├── screens/        # Telas: Dashboard, Garage, AddVehicle, History, AddMaintenance, Alerts
+│   ├── data.ts         # Dados iniciais de exemplo
+│   ├── types.ts        # Tipos compartilhados
+│   ├── utils.ts        # Funções utilitárias
+│   ├── App.tsx         # Estado global, persistência local e navegação entre telas
+│   └── main.tsx        # Ponto de entrada
+├── android/            # Projeto Android nativo (gerado pelo Capacitor)
+├── capacitor.config.ts # Configuração do Capacitor (appId, nome, pasta web)
+├── .github/workflows/  # CI que compila o APK de debug
+└── vite.config.ts
 ```
-### 2.2 Instruções de Configuração e Execução
-*Para rodar o ambiente de desenvolvimento localmente na sua máquina, siga o passo a passo abaixo:*
+Os dados (veículos, manutenções e alertas) são salvos no `localStorage` do aparelho.
 
-**2.2.1** Pré-requisitos:
-```bash 
-- Certifique-se de ter o Node.js instalado (versão LTS recomendada).
-- Tenha o aplicativo Expo Go instalado no seu smartphone (disponível na App Store e Google Play) ou um emulador Android/iOS configurado.
-```
-
-**2.2.2** Clonar repositório:
-```bash 
-git clone https://github.com/seu-usuario/maje-drive.git
+### 2.2 Executar no navegador
+**Pré-requisitos:** Node.js 22 e [pnpm](https://pnpm.io) 10.
+```bash
+git clone https://github.com/MAJE-Dev/maje-drive.git
 cd maje-drive
+pnpm install
+pnpm dev
 ```
 
-**2.2.3** Instalar dependências:
-```bash 
-npm install
-# ou
-yarn install
-```
+### 2.3 Gerar o APK (debug)
+**Opção A, pelo GitHub (sem instalar nada):** vá em *Actions → Build Android APK → Run workflow*. Ao final, baixe o artefato `maje-drive-debug-apk` (contém o `app-debug.apk`).
 
-**2.2.4** Iniciar o servidor de desenvolvimento (Expo):
-```bash 
-npx expo start
+**Opção B, localmente.** Pré-requisitos: JDK 21 e Android SDK (plataforma 36) com `ANDROID_HOME` configurado.
+```bash
+pnpm install
+pnpm android:debug
 ```
+O APK será gerado em `android/app/build/outputs/apk/debug/app-debug.apk`. Para instalar no celular com depuração USB ativa: `adb install -r android/app/build/outputs/apk/debug/app-debug.apk`.
+
+Comandos úteis: `pnpm android:sync` (reconstrói a web e sincroniza com o Android) e `npx cap open android` (abre no Android Studio).
 
 ## ®️3. Brand Identity & Guidelines (Marca)
 > *Diretrizes visuais e paleta de cores oficial do Maje Drive.*

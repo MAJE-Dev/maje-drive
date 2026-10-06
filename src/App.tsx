@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Screen, Vehicle, MaintenanceRecord, Alert } from './types';
 import { initialVehicles, initialMaintenances, initialAlerts } from './data';
 import BottomNav from './components/BottomNav';
@@ -9,12 +9,31 @@ import History from './screens/History';
 import AddMaintenance from './screens/AddMaintenance';
 import AlertsScreen from './screens/Alerts';
 
+function usePersistedState<T>(key: string, initial: T) {
+  const [value, setValue] = useState<T>(() => {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? (JSON.parse(raw) as T) : initial;
+    } catch {
+      return initial;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* armazenamento indisponível */
+    }
+  }, [key, value]);
+  return [value, setValue] as const;
+}
+
 export default function App() {
   const [screen, setScreen] = useState<Screen>('dashboard');
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string>(initialVehicles[0]?.id ?? '');
-  const [vehicles, setVehicles] = useState<Vehicle[]>(initialVehicles);
-  const [maintenances, setMaintenances] = useState<MaintenanceRecord[]>(initialMaintenances);
-  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts);
+  const [selectedVehicleId, setSelectedVehicleId] = usePersistedState<string>('maje:selected', initialVehicles[0]?.id ?? '');
+  const [vehicles, setVehicles] = usePersistedState<Vehicle[]>('maje:vehicles', initialVehicles);
+  const [maintenances, setMaintenances] = usePersistedState<MaintenanceRecord[]>('maje:maintenances', initialMaintenances);
+  const [alerts, setAlerts] = usePersistedState<Alert[]>('maje:alerts', initialAlerts);
 
   const nonOkAlertCount = alerts.filter(a => a.severity !== 'ok').length;
   const criticalCount = alerts.filter(a => a.severity === 'critical').length;
@@ -110,7 +129,7 @@ export default function App() {
   return (
     <div style={{
       background: '#030305',
-      minHeight: '100vh',
+      minHeight: '100dvh',
       display: 'flex',
       alignItems: 'flex-start',
       justifyContent: 'center',
@@ -118,12 +137,15 @@ export default function App() {
       <div style={{
         width: '100%',
         maxWidth: 390,
-        minHeight: '100vh',
+        minHeight: '100dvh',
         background: '#09090E',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
         position: 'relative',
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        boxSizing: 'border-box',
       }}>
         {/* Screen content */}
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
