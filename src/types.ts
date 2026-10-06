@@ -58,4 +58,8 @@ export interface Alert {
   dueMileage?: number;
   currentMileage?: number;
   dueDate?: string;
+  /** Data prevista (estimada pelo uso médio) para atingir a quilometragem de revisão. */
+  predictedDate?: string;
+  daysLeft?: number;
+  kmPerDay?: number;
 }

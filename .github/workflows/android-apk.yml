@@ -26,7 +26,13 @@ jobs:
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
       - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
       - run: pnpm android:debug
+        env:
+          # Opcionais: sem eles o APK funciona offline (localStorage). A chave anon é pública por design.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
       - uses: actions/upload-artifact@v4
         with:
           name: maje-drive-debug-apk

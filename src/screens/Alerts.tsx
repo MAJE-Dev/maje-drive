@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Vehicle, Alert, AlertSeverity, Screen } from '../types';
-import { categoryConfig, fmtKm } from '../utils';
+import { categoryConfig, fmtDate, fmtKm } from '../utils';
 
 interface AlertsProps {
   vehicles: Vehicle[];
@@ -206,6 +206,13 @@ export default function AlertsScreen({ vehicles, alerts, onNavigate, onDismiss }
                       <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '6px 10px' }}>
                         <span style={{ fontFamily: "'JetBrains Mono Variable'", color: '#8B929E', fontSize: 11 }}>
                           {kmDiff < 0 ? `${fmtKm(Math.abs(kmDiff))} km vencido` : `${fmtKm(kmDiff)} km restantes`}
+                        </span>
+                      </div>
+                    )}
+                    {alert.predictedDate && (
+                      <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '6px 10px' }}>
+                        <span style={{ color: cfg.badgeColor, fontSize: 11 }}>
+                          Previsão: {fmtDate(alert.predictedDate)}{alert.kmPerDay ? ` · ~${Math.round(alert.kmPerDay)} km/dia` : ''}
                         </span>
                       </div>
                     )}

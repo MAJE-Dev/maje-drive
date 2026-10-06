@@ -33,17 +33,21 @@ maje-drive/
 ├── src/
 │   ├── components/     # Componentes reutilizáveis (BottomNav)
 │   ├── screens/        # Telas: Dashboard, Garage, AddVehicle, History, AddMaintenance, Alerts
-│   ├── data.ts         # Dados iniciais de exemplo
+│   ├── data.ts         # Dados iniciais de exemplo (mock)
+│   ├── predictive.ts   # Motor de alertas preditivos e saúde do veículo
+│   ├── report.ts       # Geração/compartilhamento do dossiê em PDF
+│   ├── cloud.ts        # Integração com Supabase (CRUD + mapeamento)
 │   ├── types.ts        # Tipos compartilhados
 │   ├── utils.ts        # Funções utilitárias
 │   ├── App.tsx         # Estado global, persistência local e navegação entre telas
 │   └── main.tsx        # Ponto de entrada
 ├── android/            # Projeto Android nativo (gerado pelo Capacitor)
+├── supabase/schema.sql # Tabelas e políticas do banco
 ├── capacitor.config.ts # Configuração do Capacitor (appId, nome, pasta web)
 ├── .github/workflows/  # CI que compila o APK de debug
 └── vite.config.ts
 ```
-Os dados (veículos, manutenções e alertas) são salvos no `localStorage` do aparelho.
+Os dados (veículos e manutenções) ficam no `localStorage` do aparelho e, se o Supabase estiver configurado, também na nuvem. Os alertas **não são armazenados**: são calculados a cada abertura pelo motor preditivo (`src/predictive.ts`).
 
 ### 2.2 Executar no navegador
 **Pré-requisitos:** Node.js 22 e [pnpm](https://pnpm.io) 10.
@@ -145,6 +149,73 @@ Comandos úteis: `pnpm android:sync` (reconstrói a web e sincroniza com o Andro
   <img width="216" height="468" alt="imagem (4)" src="https://github.com/user-attachments/assets/3f5caa54-60af-4e1a-8c5c-8da67ac6654a" />
 </p>
 
+
+## ⚙️6. Funcionalidades, Arquitetura e Decisões Técnicas
+
+### 6.1 Alertas preditivos
+Calculados em `src/predictive.ts` a partir do histórico de manutenções:
+1. **Uso médio (km/dia):** inclina a reta entre o 1º registro do veículo e a quilometragem atual (hoje). Com menos de 30 dias de histórico usa 40 km/dia.
+2. **Próximo vencimento** de cada categoria (só o registro mais recente conta): `nextMileage` informado ou, na falta, o intervalo padrão (óleo 10.000 km, freios 30.000 km, etc.). `nextDate` também é respeitado.
+3. **Previsão de data** = hoje + (km restantes ÷ km/dia).
+4. **Severidade:** 🔴 vencido (km ou data passou) · 🟠 atenção (≤ 3.000 km ou ≤ 30 dias) · 🟢 em dia.
+5. **Saúde do veículo** = 100 − 25 por item vencido − 8 por item em atenção.
+
+Ao registrar uma manutenção com km maior que o atual, a quilometragem do veículo é atualizada.
+
+### 6.2 Relatório em PDF
+Na tela **Histórico**, o botão **PDF** gera o dossiê do veículo (dados, alertas preditivos, histórico e custo total) com `jsPDF` + `jspdf-autotable`. No navegador o arquivo é baixado; no Android abre a folha de compartilhamento (WhatsApp, e-mail, Drive…) via plugins `@capacitor/filesystem` e `@capacitor/share`.
+
+### 6.3 Banco de dados (Supabase)
+1. Crie um projeto em [supabase.com](https://supabase.com) e execute `supabase/schema.sql` no *SQL Editor*.
+2. Copie `.env.example` para `.env` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (Project Settings → API).
+3. Para o APK gerado pelo GitHub Actions, cadastre os mesmos dois valores em *Settings → Secrets and variables → Actions*.
+
+Comportamento *offline-first*: o app sempre grava no `localStorage` e envia as alterações ao Supabase. Na abertura, se a nuvem já tem dados, ela vale; se está vazia, recebe os dados locais. Um ponto no canto da tela indica o estado (🟠 sincronizando · 🟢 conectado · 🔴 sem conexão). Sem as variáveis, o app roda 100% offline.
+
+> ⚠️ **Limitação conhecida:** o protótipo não tem login. As políticas RLS liberam a chave anônima, então todos os aparelhos que usam o mesmo projeto veem os mesmos dados. Próximo passo: Supabase Auth + coluna `user_id` + políticas por usuário.
+
+### 6.4 Fluxo de navegação
+```text
+Dashboard ──┬─ Alertas ──── Registrar agora ──► Adicionar manutenção ──► Histórico
+            ├─ Garagem ──── Adicionar veículo ──► Dashboard
+            ├─ Histórico ── Registrar / PDF
+            └─ Botão (+) ─► Adicionar manutenção ──► Histórico
+```
+Barra inferior: Dashboard · Garagem · (+) · Histórico · Alertas.
+
+### 6.5 Decisões técnicas
+| Decisão | Motivo |
+| :--- | :--- |
+| React 19 + Vite + Tailwind v4 | Base do projeto gerada no Figma Make; build rápido. |
+| Capacitor (em vez de Expo/React Native) | Reaproveita 100% do app web já pronto e gera APK com Gradle/Android Studio. |
+| Supabase | PostgreSQL gerenciado, SDK simples e RLS; não exige servidor próprio. |
+| Offline-first com `localStorage` | App funciona sem internet e sem configuração. |
+| Alertas derivados, não salvos | Sempre coerentes com o histórico e a quilometragem atual; menos dados para sincronizar. |
+| jsPDF no cliente (carregado sob demanda) | PDF sem backend e sem pesar a abertura do app. |
+| Vitest | Mesmo toolchain do Vite; testa a lógica pura (previsão, PDF, mapeamento). |
+
+## 🧪7. Testes
+**Automatizados:** `pnpm test` (Vitest) cobre previsão de km/dia, severidades, saúde, geração do PDF e mapeamento Supabase. `pnpm typecheck` verifica os tipos. Ambos rodam no CI antes de gerar o APK.
+
+**Roteiro manual** (navegador ou APK). Marque ✅/❌:
+
+| # | Passo | Resultado esperado |
+| :-: | :--- | :--- |
+| 1 | Abrir o app | Dashboard com veículo selecionado, saúde e alertas |
+| 2 | Garagem → trocar de veículo | Dashboard e histórico passam a mostrar o veículo escolhido |
+| 3 | Garagem → Adicionar veículo (preencher e salvar) | Veículo aparece na garagem e fica selecionado |
+| 4 | Adicionar veículo sem preencher campos obrigatórios | Mensagem de erro, nada é salvo |
+| 5 | (+) → registrar manutenção (ex.: óleo, km maior que o atual) | Vai ao Histórico com o novo item; km do veículo atualiza |
+| 6 | Alertas após o passo 5 | Alerta de óleo sai de "vencido" e a previsão de data é recalculada |
+| 7 | Alertas → filtros Vencidos / Em breve / Em dia | Lista filtra corretamente |
+| 8 | Alertas → Dispensar | Alerta some; volta apenas quando houver novo registro da categoria |
+| 9 | Histórico → filtrar por categoria | Só itens da categoria; custo total confere |
+| 10 | Histórico → PDF | Navegador baixa o arquivo; Android abre o compartilhamento. PDF traz dados, alertas e histórico |
+| 11 | Garagem → excluir veículo | Veículo e seus registros somem; outro veículo é selecionado |
+| 12 | Fechar e reabrir o app | Dados continuam salvos |
+| 13 | Com Supabase: adicionar veículo e abrir o *Table Editor* | Linha aparece em `vehicles`; ponto de status verde |
+| 14 | Com Supabase: modo avião e adicionar manutenção | Ponto vermelho, dado salvo localmente, app continua funcionando |
+| 15 | No Android, observar barra de status e navegação | Conteúdo respeita as áreas seguras |
 
 <p align="center">
   © 2026 Maje Drive. Todos os direitos reservados.

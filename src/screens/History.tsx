@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import type { Vehicle, MaintenanceRecord, MaintenanceCategory, Screen } from '../types';
+import type { Vehicle, MaintenanceRecord, MaintenanceCategory, Screen, Alert } from '../types';
 import { categoryConfig, fmtKm, fmtDate, fmtCurrency } from '../utils';
 
 interface HistoryProps {
   vehicles: Vehicle[];
   selectedVehicleId: string;
   maintenances: MaintenanceRecord[];
+  alerts: Alert[];
   onNavigate: (screen: Screen) => void;
   onSelectVehicle: (id: string) => void;
 }
@@ -32,7 +33,9 @@ function CategoryIcon({ cat }: { cat: MaintenanceCategory }) {
   return <>{icons[cat]}</>;
 }
 
-export default function History({ vehicles, selectedVehicleId, maintenances, onNavigate, onSelectVehicle }: HistoryProps) {
+export default function History({ vehicles, selectedVehicleId, maintenances, alerts, onNavigate, onSelectVehicle }: HistoryProps) {
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
   const [filter, setFilter] = useState<MaintenanceCategory | 'all'>('all');
   const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -41,6 +44,21 @@ export default function History({ vehicles, selectedVehicleId, maintenances, onN
     .filter(m => m.vehicleId === (vehicle?.id ?? ''))
     .filter(m => filter === 'all' || m.category === filter)
     .sort((a, b) => b.date.localeCompare(a.date));
+
+  const handleExport = async () => {
+    if (!vehicle || exporting) return;
+    setExporting(true);
+    setExportError('');
+    try {
+      const { exportReport } = await import('../report');
+      await exportReport(vehicle, maintenances, alerts);
+    } catch (err) {
+      // Fechar a folha de compartilhamento sem escolher um destino não é erro.
+      if (!/cancel/i.test(String(err))) setExportError('Não foi possível gerar o PDF.');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const thisYear = new Date().getFullYear().toString();
   const yearCost = vMaint.filter(m => m.date.startsWith(thisYear)).reduce((s, m) => s + m.cost, 0);
@@ -59,6 +77,19 @@ export default function History({ vehicles, selectedVehicleId, maintenances, onN
             <div style={{ color: '#F2F3F7', fontSize: 22, fontWeight: 700 }}>Histórico</div>
             <div style={{ color: '#4A5168', fontSize: 13, marginTop: 2 }}>{vehicle ? `${vehicle.brand} ${vehicle.model}` : 'Nenhum veículo'}</div>
           </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={handleExport}
+            disabled={!vehicle || exporting}
+            aria-label="Exportar relatório em PDF"
+            style={{
+              background: '#171A1F', border: `1.5px solid ${TEAL}55`, borderRadius: 12,
+              padding: '9px 12px', color: TEAL, fontSize: 13, fontWeight: 700,
+              cursor: 'pointer', opacity: exporting ? 0.6 : 1,
+            }}
+          >
+            {exporting ? 'Gerando…' : 'PDF'}
+          </button>
           <button
             onClick={() => onNavigate('add-maintenance')}
             style={{
@@ -73,7 +104,10 @@ export default function History({ vehicles, selectedVehicleId, maintenances, onN
             </svg>
             Registrar
           </button>
+          </div>
         </div>
+
+        {exportError && <div role="alert" style={{ color: '#EF4444', fontSize: 12, marginBottom: 8 }}>{exportError}</div>}
 
         {/* Vehicle selector */}
         {vehicles.length > 1 && (

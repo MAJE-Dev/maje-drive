@@ -1,4 +1,4 @@
-import type { Vehicle, MaintenanceRecord, Alert } from './types';
+import type { Vehicle, MaintenanceRecord } from './types';
 
 export const initialVehicles: Vehicle[] = [
   {
@@ -129,68 +129,5 @@ export const initialMaintenances: MaintenanceRecord[] = [
     mileage: 20000,
     cost: 420,
     nextMileage: 40000,
-  },
-];
-
-export const initialAlerts: Alert[] = [
-  {
-    id: 'a1',
-    vehicleId: 'v1',
-    category: 'filters',
-    title: 'Filtro de combustível',
-    description: 'Substituição vencida há 2.230 km',
-    severity: 'critical',
-    dueMileage: 43000,
-    currentMileage: 45230,
-  },
-  {
-    id: 'a2',
-    vehicleId: 'v1',
-    category: 'oil',
-    title: 'Troca de óleo',
-    description: 'Faltam apenas 2.770 km para a troca',
-    severity: 'warning',
-    dueMileage: 48000,
-    currentMileage: 45230,
-  },
-  {
-    id: 'a3',
-    vehicleId: 'v1',
-    category: 'revision',
-    title: 'Revisão dos 50.000 km',
-    description: 'Faltam 4.770 km para a próxima revisão',
-    severity: 'ok',
-    dueMileage: 50000,
-    currentMileage: 45230,
-  },
-  {
-    id: 'a4',
-    vehicleId: 'v2',
-    category: 'oil',
-    title: 'Troca de óleo',
-    description: 'Substituição vencida há 450 km',
-    severity: 'critical',
-    dueMileage: 82000,
-    currentMileage: 82450,
-  },
-  {
-    id: 'a5',
-    vehicleId: 'v2',
-    category: 'filters',
-    title: 'Filtro de ar',
-    description: 'Faltam 1.550 km para substituição',
-    severity: 'warning',
-    dueMileage: 84000,
-    currentMileage: 82450,
-  },
-  {
-    id: 'a6',
-    vehicleId: 'v3',
-    category: 'revision',
-    title: 'Revisão dos 30.000 km',
-    description: 'Faltam 1.900 km para a próxima revisão',
-    severity: 'warning',
-    dueMileage: 30000,
-    currentMileage: 28100,
   },
 ];
