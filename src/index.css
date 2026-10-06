@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@import 'tailwindcss';
+
+@theme {
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+}
+
+:root {
+  --bg: #0D0F13;
+  --bg-card: #171A1F;
+  --bg-card2: #1D2026;
+  --bg-input: #131619;
+  --border: #222630;
+  --border2: #2C3040;
+  --text1: #F2F3F7;
+  --text2: #8B929E;
+  --text3: #4A5168;
+  --accent: #00CCCC;
+  --accent-glow: rgba(0, 204, 204, 0.22);
+  --accent-dim: rgba(0, 204, 204, 0.12);
+  --blue: #4A9EFF;
+  --blue-dim: rgba(74, 158, 255, 0.12);
+  --success: #00CCCC;
+  --success-dim: rgba(0, 204, 204, 0.12);
+  --warning: #FF7A30;
+  --warning-dim: rgba(255, 122, 48, 0.14);
+  --danger: #EF4444;
+  --danger-dim: rgba(239, 68, 68, 0.14);
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: #050507;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text1);
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+input, textarea, select, button {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text3);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+}
