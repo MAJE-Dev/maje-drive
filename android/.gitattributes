@@ -1,0 +1,3 @@
+# Ícones/splash gerados pelo Capacitor: arquivos pequenos, mantidos fora do LFS
+*.png -filter -diff -merge binary
+*.jar -filter -diff -merge binary

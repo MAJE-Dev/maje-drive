@@ -29,7 +29,7 @@ export default function App() {
     setVehicles(prev => prev.filter(v => v.id !== id));
     if (selectedVehicleId === id) {
       const remaining = vehicles.filter(v => v.id !== id);
-      if (remaining.length > 0) setSelectedVehicleId(remaining[0].id);
+      setSelectedVehicleId(remaining[0]?.id ?? '');
     }
   };
 
