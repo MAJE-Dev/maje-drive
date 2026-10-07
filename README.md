@@ -167,7 +167,7 @@ Na tela **Histórico**, o botão **PDF** gera o dossiê do veículo (dados, aler
 
 ### 6.3 Banco de dados (Supabase)
 1. Crie um projeto em [supabase.com](https://supabase.com) e execute `supabase/schema.sql` no *SQL Editor*.
-2. Copie `.env.example` para `.env` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (Project Settings → API).
+2. Copie `.env.example` para `.env.local` e preencha `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (Project Settings → API).
 3. Para o APK gerado pelo GitHub Actions, cadastre os mesmos dois valores em *Settings → Secrets and variables → Actions*.
 
 Comportamento *offline-first*: o app sempre grava no `localStorage` e envia as alterações ao Supabase. Na abertura, se a nuvem já tem dados, ela vale; se está vazia, recebe os dados locais. Um ponto no canto da tela indica o estado (🟠 sincronizando · 🟢 conectado · 🔴 sem conexão). Sem as variáveis, o app roda 100% offline.

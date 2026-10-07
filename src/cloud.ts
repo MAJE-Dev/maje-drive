@@ -1,17 +1,8 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { getSupabase, supabaseEnabled } from './lib/supabase';
 import type { FuelType, MaintenanceCategory, MaintenanceRecord, Vehicle } from './types';
 
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
-
-export const cloudEnabled = Boolean(url && key);
-
-let client: SupabaseClient | null = null;
-function db(): SupabaseClient {
-  if (!url || !key) throw new Error('Supabase não configurado');
-  client ??= createClient(url, key, { auth: { persistSession: false } });
-  return client;
-}
+export const cloudEnabled = supabaseEnabled;
+const db = getSupabase;
 
 interface VehicleRow {
   id: string;
