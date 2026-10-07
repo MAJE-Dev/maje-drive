@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { maintenanceFromRow, maintenanceToRow, vehicleFromRow, vehicleToRow } from './cloud';
+import { mergeById, maintenanceFromRow, maintenanceToRow, vehicleFromRow, vehicleToRow } from './cloud';
 import { initialMaintenances, initialVehicles } from './data';
 
 describe('mapeamento Supabase', () => {
@@ -14,5 +14,12 @@ describe('mapeamento Supabase', () => {
   });
   it('usa snake_case nas colunas', () => {
     expect(Object.keys(maintenanceToRow(initialMaintenances[0]))).toContain('vehicle_id');
+  });
+});
+
+describe('mergeById', () => {
+  it('mantém itens só locais e prefere a nuvem em conflito', () => {
+    const merged = mergeById([{ id: 'a', v: 'nuvem' }], [{ id: 'a', v: 'local' }, { id: 'b', v: 'local' }]);
+    expect(merged).toEqual([{ id: 'a', v: 'nuvem' }, { id: 'b', v: 'local' }]);
   });
 });

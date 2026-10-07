@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Screen, Vehicle, MaintenanceRecord, Alert } from './types';
 import { initialVehicles, initialMaintenances } from './data';
 import { buildAlerts, computeHealthScore, toISODate } from './predictive';
-import { cloudEnabled, fetchAll, pushAll, upsertVehicle, removeVehicle, upsertMaintenance } from './cloud';
+import { cloudEnabled, fetchAll, mergeById, pushAll, upsertVehicle, removeVehicle, upsertMaintenance } from './cloud';
 import BottomNav from './components/BottomNav';
 import Dashboard from './screens/Dashboard';
 import Garage from './screens/Garage';
@@ -55,10 +55,10 @@ export default function App() {
     [storedVehicles, allAlerts],
   );
 
-  const track = (op: Promise<unknown>) => {
+  const track = (op: () => Promise<unknown>) => {
     if (!cloudEnabled) return;
     setSync('syncing');
-    op.then(() => setSync('online')).catch(err => {
+    op().then(() => setSync('online')).catch(err => {
       console.error('Falha ao sincronizar com o Supabase', err);
       setSync('error');
     });
@@ -71,13 +71,17 @@ export default function App() {
     fetchAll()
       .then(async remote => {
         if (cancelled) return;
-        if (remote.vehicles.length === 0 && remote.maintenances.length === 0) {
-          await pushAll(storedVehicles, maintenances);
-        } else {
-          setVehicles(remote.vehicles);
-          setMaintenances(remote.maintenances);
-          setSelectedVehicleId(id => (remote.vehicles.some(v => v.id === id) ? id : remote.vehicles[0]?.id ?? ''));
-        }
+        // Une nuvem + aparelho (nada local é descartado) e envia o que só existe no aparelho.
+        const remoteVehicleIds = new Set(remote.vehicles.map(v => v.id));
+        const remoteMaintIds = new Set(remote.maintenances.map(m => m.id));
+        await pushAll(
+          storedVehicles.filter(v => !remoteVehicleIds.has(v.id)),
+          maintenances.filter(m => !remoteMaintIds.has(m.id)),
+        );
+        if (cancelled) return;
+        setVehicles(prev => mergeById(remote.vehicles, prev));
+        setMaintenances(prev => mergeById(remote.maintenances, prev));
+        setSelectedVehicleId(id => id || remote.vehicles[0]?.id || '');
         if (!cancelled) setSync('online');
       })
       .catch(err => {
@@ -94,14 +98,14 @@ export default function App() {
   const criticalCount = alerts.filter(a => a.severity === 'critical').length;
 
   const addVehicle = (v: Vehicle) => {
-    track(upsertVehicle(v));
+    track(() => upsertVehicle(v));
     setVehicles(prev => [...prev, v]);
     setSelectedVehicleId(v.id);
     setScreen('dashboard');
   };
 
   const deleteVehicle = (id: string) => {
-    track(removeVehicle(id));
+    track(() => removeVehicle(id));
     setVehicles(prev => prev.filter(v => v.id !== id));
     setMaintenances(prev => prev.filter(m => m.vehicleId !== id));
     if (selectedVehicleId === id) {
@@ -113,8 +117,13 @@ export default function App() {
   const addMaintenance = (m: MaintenanceRecord) => {
     const vehicle = storedVehicles.find(v => v.id === m.vehicleId);
     const updated = vehicle && m.mileage > vehicle.mileage ? { ...vehicle, mileage: m.mileage } : undefined;
-    track(Promise.all([upsertMaintenance(m), updated ? upsertVehicle(updated) : null]));
+    // O veículo precisa existir na nuvem antes da manutenção (chave estrangeira).
+    track(async () => {
+      if (vehicle) await upsertVehicle(updated ?? vehicle);
+      await upsertMaintenance(m);
+    });
     setMaintenances(prev => [m, ...prev]);
+    setSelectedVehicleId(m.vehicleId);
     if (updated) setVehicles(prev => prev.map(v => (v.id === updated.id ? updated : v)));
     setScreen('history');
   };

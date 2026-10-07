@@ -30,6 +30,12 @@ interface MaintenanceRow {
   next_date: string | null;
 }
 
+/** União por id: itens da nuvem vencem em caso de conflito; itens só locais são mantidos. */
+export function mergeById<T extends { id: string }>(remote: T[], local: T[]): T[] {
+  const ids = new Set(remote.map(r => r.id));
+  return [...remote, ...local.filter(l => !ids.has(l.id))];
+}
+
 export const vehicleToRow = (v: Vehicle): VehicleRow => ({
   id: v.id,
   brand: v.brand,
