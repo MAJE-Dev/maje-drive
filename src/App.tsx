@@ -226,6 +226,9 @@ export default function App() {
           {renderScreen()}
         </div>
 
+        {/* Spacer so content isn't hidden behind the fixed nav */}
+        {showBottomNav && <div style={{ height: 76, flexShrink: 0 }} />}
+
         {/* Bottom nav */}
         {showBottomNav && (
           <BottomNav

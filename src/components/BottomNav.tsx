@@ -88,12 +88,20 @@ export default function BottomNav({ activeScreen, onNavigate, alertCount, onAddP
 
   return (
     <div style={{
+      position: 'fixed',
+      bottom: 0,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '100%',
+      maxWidth: 390,
+      zIndex: 100,
+      boxSizing: 'content-box',
+      paddingBottom: 'env(safe-area-inset-bottom)',
       height: 76,
       background: '#0D0F13',
       borderTop: '1px solid #1D2028',
       display: 'flex',
       alignItems: 'center',
-      position: 'relative',
       flexShrink: 0,
     }}>
       {item('Início', <HomeIcon active={activeScreen === 'dashboard'} />, 'dashboard')}
