@@ -197,8 +197,6 @@ Barra inferior: Dashboard · Garagem · (+) · Histórico · Alertas.
 ## 🧪7. Testes
 **Automatizados:** `pnpm test` (Vitest) cobre previsão de km/dia, severidades, saúde, geração do PDF e mapeamento Supabase. `pnpm typecheck` verifica os tipos. Ambos rodam no CI antes de gerar o APK.
 
-**Roteiro manual** (navegador ou APK). Marque ✅/❌:
-
 | # | Passo | Resultado esperado |
 | :-: | :--- | :--- |
 | 1 | Abrir o app | Dashboard com veículo selecionado, saúde e alertas |
